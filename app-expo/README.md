@@ -1,4 +1,4 @@
-#Cryptollama React Native App with expo
+# Cryptollama React Native App with expo
 ## Location based Cryptollama NFT game
 
 #### Setup
