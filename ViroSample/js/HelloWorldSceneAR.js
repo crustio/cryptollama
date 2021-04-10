@@ -20,6 +20,7 @@ import {
 
 const LAT = 43.64908009505727;
 const LONG = -79.39208006695965;
+const backend_url = "http://127.0.0.1:5000";
 
 export default class HelloWorldSceneAR extends Component {
 
@@ -29,7 +30,13 @@ export default class HelloWorldSceneAR extends Component {
     // Set initial state here
     this.state = {
       text : "Initializing ...",
+
+      // My current location
       location: null,
+
+      // Backend generated location to place lama
+      lat: null,
+      long: null,
 
       lamaCollected: false,
     };
@@ -54,18 +61,47 @@ export default class HelloWorldSceneAR extends Component {
   componentWillMount() {
     // Geo location will only work when tested in compiled native android app
     this.findCoordinates();
+
+    // TODO Replace LONG and LAT with real data got from the device
+    fetch(`${backend_url}/coordinates`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({longitude: LONG, latitude: LAT}),
+    }).then(response => response.json())
+    .then(data => {
+      Alert.alert(`Got location ${JSON.stringify(data)}`)
+
+      this.setState({
+        lat: data.latitude,
+        long: data.longitude,
+      })
+    }).catch((error) => {
+      Alert.alert(`Failed to got location with error: ${JSON.stringify(error)}`);
+    });
   }
 
   onLamaClick = () => {
     this.setState({
       lamaCollected: true
     });
-    Alert.alert("You just collected a Lama!");
-    // TODO Send request to create NFT
+
+    // TODO Send request to create NFT, get a url back in response linking to the created NFT
+    fetch(`${backend_url}/nft`, {
+      method: 'POST',
+    }).then(response => response.json())
+    .then(data => {
+      Alert.alert(`Got response ${JSON.stringify(data)}`)
+    }).catch((error) => {
+      Alert.alert(`Failed request NFT with error: ${JSON.stringify(error)}`);
+    });
   }
 
   render() {
-    const { lamaCollected } = this.state;
+    const { lamaCollected, lat, long } = this.state;
+
+    // TODO Convert lat/long to world coordinate
 
     return (
       <ViroARScene onTrackingUpdated={this._onInitialized} >

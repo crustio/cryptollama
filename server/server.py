@@ -12,7 +12,8 @@ def randomCoordinates():
     request_data = request.json
     device_longitude = request_data.get("longitude")
     device_latitude = request_data.get("latitude")
-    coordinates = {"longitude": 37.785834, "latitude": -122.406417}
+    # Echo user's current location for now
+    coordinates = {"longitude": device_longitude, "latitude": device_latitude}
     # TODO: hook contract to generate
     response = make_response(coordinates, 200)
     return response
@@ -22,7 +23,7 @@ def randomCoordinates():
 @app.route('/nft', methods=['POST'])
 def createNFT():
     request_data = request.json
-    response = make_response("OK", 200)
+    response = make_response({"nft_uri": "https://ipfs.io/ipfs/QmZGQA92ri1jfzSu61JRaNQXYg1bLuM7p8YT83DzFA2KLH?filename=Chainlink_Knight.png"}, 200)
     return response
 
 
