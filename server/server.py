@@ -7,7 +7,7 @@ app = Flask(__name__)
 logger = logging.getLogger(__name__)
 
 # retrieve random location
-@app.route('/coordinates', method=['POST'])
+@app.route('/coordinates', methods=['POST'])
 def randomCoordinates():
     request_data = request.json
     device_longitude = request_data.get("longitude")
@@ -19,7 +19,7 @@ def randomCoordinates():
 
 
 # create NFT token
-@app.route('/nft', method=['POST'])
+@app.route('/nft', methods=['POST'])
 def createNFT():
     request_data = request.json
     response = make_response("OK", 200)
