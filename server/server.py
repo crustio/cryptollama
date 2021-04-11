@@ -1,8 +1,6 @@
 from flask import Flask, make_response, request
 import logging
 import random
-import json
-from web3 import Web3
 
 app = Flask(__name__)
 logger = logging.getLogger(__name__)
@@ -49,4 +47,13 @@ def createNFT():
     response = make_response({"nft_uri": nft_uri}, 200)
     return response
 
+# A welcome message to test our server
+@app.route('/')
+def index():
+    return "<h1>Crypto Llama server!!</h1>"
+
+
+if __name__ == '__main__':
+    # Threaded option to enable multiple instances for multiple user access support
+    app.run(threaded=True, port=5000)
 
