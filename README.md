@@ -16,3 +16,7 @@ Player walks around the area to find the cryptollama.
 * AR App: `ViroSample`
 * Python API Server: `server`
 * Cryptollama Dynamic NFT: `llama-nft`
+
+### AR App setup
+
+Please see [this README file.](ViroSample/README.md)
