@@ -179,12 +179,6 @@ export default class LamaCollectionSceneAR extends Component {
             />
           </ViroNode>
         )}
-
-        {lamaCollected && lamaNFTUrl && (
-          <NFTModal
-             nftUrl={lamaNFTUrl}
-          />
-        )}
       </ViroARScene>
     );
   }
