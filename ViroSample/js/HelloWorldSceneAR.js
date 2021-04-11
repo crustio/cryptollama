@@ -2,7 +2,9 @@
 
 import React, { Component } from 'react';
 
-import { StyleSheet,Alert } from 'react-native';
+import { StyleSheet,Alert,View } from 'react-native';
+
+import { measureDistance, mercatorLatLonToMetersCoord } from "./services"
 
 import {
   ViroARScene,
@@ -18,8 +20,10 @@ import {
   ViroAnimations,
 } from 'react-viro';
 
-const LAT = 43.64908009505727;
-const LONG = -79.39208006695965;
+// Current position for testing purpose, change this to your location
+const LAT = 43.64908;
+const LONG = -79.39208;
+
 const backend_url = "http://127.0.0.1:5000";
 
 export default class HelloWorldSceneAR extends Component {
@@ -32,7 +36,8 @@ export default class HelloWorldSceneAR extends Component {
       text : "Initializing ...",
 
       // My current location
-      location: null,
+      mLat: null,
+      mLong: null,
 
       // Backend generated location to place lama
       lat: null,
@@ -45,29 +50,15 @@ export default class HelloWorldSceneAR extends Component {
     this._onInitialized = this._onInitialized.bind(this);
   }
 
-  findCoordinates = () => {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const location = JSON.stringify(position);
+  getNFTLocation = () => {
+    const { mLat, mLong } = this.state;
 
-        Alert.alert(`Got location ${position}`)
-        this.setState({ location });
-      },
-      error => Alert.alert(error.message),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
-  };
-
-  componentWillMount() {
-    // Geo location will only work when tested in compiled native android app
-    this.findCoordinates();
-
-    // TODO Replace LONG and LAT with real data got from the device
     fetch(`${backend_url}/coordinates`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      // TODO Replace this LONG and LAT with real data got from the device (mLat, mLong)
       body: JSON.stringify({longitude: LONG, latitude: LAT}),
     }).then(response => response.json())
     .then(data => {
@@ -80,6 +71,27 @@ export default class HelloWorldSceneAR extends Component {
     }).catch((error) => {
       Alert.alert(`Failed to got location with error: ${JSON.stringify(error)}`);
     });
+  }
+
+  findCoordinates = () => {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        this.setState({
+          mLat: position.coords.latitude,
+          mLong: position.coords.longitude,
+        }, this.getNFTLocation);
+      },
+      error => Alert.alert(error.message),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+  };
+
+  componentWillMount() {
+    // Geo location will only work when tested in compiled native android app
+    this.findCoordinates();
+
+    // This is temp for testing
+    this.getNFTLocation();
   }
 
   onLamaClick = () => {
@@ -101,27 +113,59 @@ export default class HelloWorldSceneAR extends Component {
   render() {
     const { lamaCollected, lat, long } = this.state;
 
-    // TODO Convert lat/long to world coordinate
+    let x = 0;
+    let y = 0;
+    let z = -1; // Place object 1 meter in front of viewer, as user faces neg z-axis
+
+    // translate image card to xy, this function take in lat/long degree and outputs point in pixels
+    const objPos = mercatorLatLonToMetersCoord({lat: lat, lng: long});
+
+    // translate current device position to a lat/lng
+    const currentDevicePos = mercatorLatLonToMetersCoord({lat:LAT, lng:LONG});
+
+    x = objPos.x - currentDevicePos.x;
+    z = - (objPos.y - currentDevicePos.y); // User faces negative z-axis
+
+    // Alert.alert(`distance: ${measureDistance(LAT, LONG, newLat, LONG)}`)
+    Alert.alert(`Lama location: [${x} ${y} ${z}]`)
 
     return (
       <ViroARScene onTrackingUpdated={this._onInitialized} >
-        <ViroText text={this.state.text} scale={[.5, .5, .5]} position={[0, 0, -1]} style={styles.helloWorldTextStyle} />
-
         <ViroAmbientLight color={"#aaaaaa"} />
-        <ViroSpotLight innerAngle={5} outerAngle={90} direction={[0,-1,-.2]}
-          position={[0, 3, 1]} color="#ffffff" castsShadow={true} />
+        <ViroSpotLight
+          innerAngle={5}
+          outerAngle={90}
+          direction={[0,-1,-.2]}
+          position={[0, 3, 1]}
+          color="#ffffff"
+          castsShadow={true}
+        />
 
-        {!lamaCollected && (
-          <ViroNode position={[0,-.5,-1]} dragType="FixedToWorld" onDrag={()=>{}} onClick={this.onLamaClick}>
+        {lat && long && (
+            <ViroText // title text
+              text={this.state.text}
+              scale={[.5, .5, .5]}
+              position={[x, y, z]}
+              style={styles.helloWorldTextStyle}
+            />
+        )}
+
+        {lat && long && !lamaCollected && (
+          <ViroNode
+            position={[x, y - 0.5, z]} // put object below title text
+            dragType="FixedToWorld"
+            onDrag={() => {
+            }}
+            onClick={this.onLamaClick}
+          >
             <ViroBox
-                position={[0, -.5, -1]}
-                scale={[.3, .3, .1]}
-                materials={["grid"]}
-                animation={{name: "rotate", run: true, loop: true}}
+              position={[0, 0, 0]}
+              scale={[.3, .3, .1]}
+              materials={["grid"]}
+              animation={{name: "rotate", run: true, loop: true}}
             />
           </ViroNode>
         )}
-
       </ViroARScene>
     );
   }
@@ -145,6 +189,12 @@ var styles = StyleSheet.create({
     textAlignVertical: 'center',
     textAlign: 'center',  
   },
+  container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#F5FCFF'
+	}
 });
 
 ViroMaterials.createMaterials({
