@@ -20,10 +20,15 @@ def randomCoordinates():
 
 
 # create NFT token
-@app.route('/nft', methods=['POST'])
+@app.route('/nft', methods=['GET'])
 def createNFT():
-    request_data = request.json
-    response = make_response({"nft_uri": "https://ipfs.io/ipfs/QmZGQA92ri1jfzSu61JRaNQXYg1bLuM7p8YT83DzFA2KLH?filename=Chainlink_Knight.png"}, 200)
+    color = request.args.get("color")
+    nft_uri = ""
+    if color == "pink":
+        nft_uri = "https://testnets.opensea.io/assets/0x8ec2877a04570f6f7af4dc02b18197e8c74e5d20/1"
+    else:
+        nft_uri = "https://testnets.opensea.io/assets/0x8ec2877a04570f6f7af4dc02b18197e8c74e5d20/0"
+    response = make_response({"nft_uri": nft_uri}, 200)
     return response
 
 
