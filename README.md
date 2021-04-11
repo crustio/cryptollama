@@ -13,8 +13,8 @@ Player walks around the area to find the cryptollama.
  We use chainlink's VRF to dynamic generate the cryptollamas NFTs.
 
 #### Project structure
-* AR App: `ViroSample`
-* Python API Server: `server`
+* AR App: `ViroSample` (This is the only App that requires setup locally)
+* Python API Server: `server` (This is deployed to Heroku, no need to setup)
 * Cryptollama Dynamic NFT: `llama-nft`
 
 ### AR App setup
