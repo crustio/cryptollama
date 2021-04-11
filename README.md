@@ -1,12 +1,18 @@
 # Cryptollama 
-### Location Based NFT Game
+### Location Based NFT AR Gaming App
 
 #### Introduction
 Welcome to our home page! We are building this Cryptollama game for Chainlink 2021 hackathon!
-We are using chainlink's VRF contract to generate randomness to create random locations
-for gamers to collect their cryptollama NFTs!
+
+The app randomly generates locations to place Cryptollamas in AR. 
+Player walks around the area to find the cryptollama.
+ When found one, the player can tap the cryptollama and it will direct to the NFT token at opensea. 
+ The player can make an offer to own the piece through opensea. 
+ Cryptollamas come with different specialties and colors, which determines their value, are tradable between gamers.
+ 
+ We use chainlink's VRF to dynamic generate the cryptollamas NFTs.
 
 #### Project structure
-* app-expo: react native app
-* contracts: smart contract calling chainlink VRF protocol
-* server: REST API with web3 that calls our random geolocation generator smart contract
+* AR App: `ViroSample`
+* Python API Server: `server`
+* Cryptollama Dynamic NFT: `llama-nft`
