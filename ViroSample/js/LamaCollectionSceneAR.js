@@ -22,7 +22,7 @@ import {
 const LAT = 43.64908;
 const LONG = -79.39208;
 
-const backend_url = "http://127.0.0.1:5000";
+const backend_url = "https://crypto-lama-server.herokuapp.com/";
 
 export default class LamaCollectionSceneAR extends Component {
 
