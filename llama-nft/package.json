@@ -1,7 +1,7 @@
 {
-  "name": "llama-nft",
-  "version": "0.6.0",
-  "description": "llama nft",
+  "name": "crust-svg-nft",
+  "version": "0.0.1",
+  "description": "Crust svg nft demo for chainlink",
   "scripts": {
     "compile": "npx truffle compile",
     "console:dev": "npx truffle console --network cldev",
